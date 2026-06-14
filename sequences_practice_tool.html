@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arithmetic & Geometric Sequences Practice</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #f8fafc;
+      --muted: #cbd5e1;
+      --accent: #38bdf8;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --purple: #a78bfa;
+      --card: rgba(255,255,255,.08);
+      --border: rgba(255,255,255,.16);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1e3a8a 0%, var(--bg) 42%, #020617 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 28px 18px 16px;
+      text-align: center;
+    }
+
+    h1 { margin: 0 0 8px; font-size: clamp(1.8rem, 4vw, 3rem); }
+    .subtitle { color: var(--muted); max-width: 900px; margin: 0 auto; line-height: 1.45; }
+
+    main { max-width: 1160px; margin: 0 auto; padding: 14px; }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .stat, .panel, .question-card, .mini-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.055));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(0,0,0,.22);
+    }
+
+    .stat { padding: 14px; }
+    .stat .label { color: var(--muted); font-size: .88rem; }
+    .stat .value { font-size: 1.7rem; font-weight: 800; margin-top: 4px; }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+      justify-content: center;
+    }
+
+    button, select, input {
+      font: inherit;
+    }
+
+    .tab-btn, .primary, .secondary, .choice-btn, .small-btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 11px 15px;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      font-weight: 750;
+    }
+
+    button:hover { transform: translateY(-1px); filter: brightness(1.08); }
+    button:active { transform: translateY(0); }
+
+    .tab-btn { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+    .tab-btn.active { background: var(--accent); color: #082f49; }
+    .primary { background: var(--good); color: #052e16; }
+    .secondary { background: #334155; color: var(--text); border: 1px solid var(--border); }
+    .small-btn { padding: 8px 11px; font-size: .9rem; background: #475569; color: white; border: 1px solid var(--border); }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .panel { padding: 18px; margin-bottom: 14px; }
+    .panel h2 { margin: 0 0 8px; }
+    .panel p { color: var(--muted); line-height: 1.5; }
+
+    .lesson-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card { padding: 14px; background: rgba(255,255,255,.075); }
+    .mini-card h3 { margin: 0 0 8px; color: #e0f2fe; }
+    .mini-card ul { margin: 8px 0 0 20px; color: var(--muted); line-height: 1.55; }
+
+    .question-card { padding: 18px; }
+    .badge-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 10px; border-radius: 999px;
+      background: rgba(56,189,248,.16); color: #bae6fd; font-weight: 750; font-size: .9rem;
+      border: 1px solid rgba(56,189,248,.25);
+    }
+    .badge.warn { background: rgba(245,158,11,.18); color: #fde68a; border-color: rgba(245,158,11,.25); }
+    .badge.purple { background: rgba(167,139,250,.18); color: #ddd6fe; border-color: rgba(167,139,250,.25); }
+
+    .sequence {
+      font-size: clamp(1.45rem, 5vw, 2.6rem);
+      font-weight: 900;
+      letter-spacing: .02em;
+      text-align: center;
+      margin: 18px auto;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(2,6,23,.52);
+      border: 1px solid rgba(255,255,255,.16);
+      overflow-wrap: anywhere;
+    }
+
+    .prompt { font-size: 1.13rem; line-height: 1.5; color: #e2e8f0; }
+
+    .answer-area {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    input[type="text"], input[type="number"] {
+      width: 100%;
+      padding: 13px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(15,23,42,.75);
+      color: var(--text);
+      outline: none;
+    }
+
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56,189,248,.18); }
+
+    .choices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 14px; }
+    .choice-btn { border-radius: 16px; background: rgba(255,255,255,.10); color: white; border: 1px solid var(--border); text-align: left; }
+    .choice-btn.selected { background: rgba(56,189,248,.28); border-color: var(--accent); }
+
+    .tools { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+    .feedback {
+      min-height: 46px;
+      margin-top: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.075);
+      border: 1px solid var(--border);
+      color: #e2e8f0;
+      line-height: 1.45;
+    }
+    .feedback.good { border-color: rgba(34,197,94,.55); background: rgba(34,197,94,.13); }
+    .feedback.bad { border-color: rgba(239,68,68,.55); background: rgba(239,68,68,.13); }
+    .feedback.warn { border-color: rgba(245,158,11,.55); background: rgba(245,158,11,.13); }
+
+    .progress-wrap { height: 14px; background: rgba(255,255,255,.11); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--good)); transition: width .25s ease; }
+
+    .report {
+      white-space: pre-wrap;
+      background: rgba(2,6,23,.65);
+      border: 1px solid var(--border);
+      padding: 14px;
+      border-radius: 14px;
+      color: #e2e8f0;
+      line-height: 1.45;
+      min-height: 170px;
+    }
+
+    .hidden { display: none !important; }
+
+    @media (max-width: 760px) {
+      .top-grid, .lesson-grid { grid-template-columns: 1fr 1fr; }
+      .answer-area { grid-template-columns: 1fr; }
+      .choices { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      main { padding: 10px; }
+      .top-grid, .lesson-grid { grid-template-columns: 1fr; }
+      .tab-btn { flex: 1 1 45%; }
+    }
+
+    @media print {
+      body { background: white; color: black; }
+      header, .tabs, .question-card, .tools, .top-grid { display: none !important; }
+      .section { display: none !important; }
+      #report.section { display: block !important; }
+      .panel, .report { box-shadow: none; border: 1px solid #999; color: black; background: white; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Sequences Practice Lab</h1>
+    <p class="subtitle">Build confidence with arithmetic and geometric sequences. Start separately, level up, then tackle mixed problems where you identify the pattern before solving.</p>
+  </header>
+
+  <main>
+    <div class="top-grid">
+      <div class="stat"><div class="label">Correct</div><div class="value" id="correctStat">0</div></div>
+      <div class="stat"><div class="label">Attempts</div><div class="value" id="attemptStat">0</div></div>
+      <div class="stat"><div class="label">Streak</div><div class="value" id="streakStat">0</div></div>
+      <div class="stat"><div class="label">Accuracy</div><div class="value" id="accuracyStat">—</div></div>
+    </div>
+
+    <div class="panel">
+      <div style="display:flex; justify-content:space-between; gap:12px; align-items:center; flex-wrap:wrap;">
+        <div style="flex:1; min-width:220px;">
+          <strong>Overall progress</strong>
+          <div class="progress-wrap" style="margin-top:8px;"><div class="progress-bar" id="progressBar"></div></div>
+        </div>
+        <button class="secondary" onclick="resetAll()">Reset Session</button>
+      </div>
+    </div>
+
+    <nav class="tabs">
+      <button class="tab-btn active" onclick="showSection('learn', this)">Learn</button>
+      <button class="tab-btn" onclick="showSection('arithmetic', this)">Arithmetic</button>
+      <button class="tab-btn" onclick="showSection('geometric', this)">Geometric</button>
+      <button class="tab-btn" onclick="showSection('mixed', this)">Mixed Challenge</button>
+      <button class="tab-btn" onclick="showSection('report', this); buildReport();">Report</button>
+    </nav>
+
+    <section id="learn" class="section active">
+      <div class="panel">
+        <h2>How to Tell the Difference Quickly</h2>
+        <p>The fast Regents move: check whether the same number is being <strong>added/subtracted</strong> each time or the same number is being <strong>multiplied</strong> each time.</p>
+        <div class="lesson-grid">
+          <div class="mini-card">
+            <h3>Arithmetic Sequence</h3>
+            <p>Look for a constant difference.</p>
+            <ul>
+              <li>Example: 5, 8, 11, 14, ...</li>
+              <li>Each term adds 3.</li>
+              <li>Common difference: d = 3</li>
+              <li>Quick check: subtract neighboring terms.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Geometric Sequence</h3>
+            <p>Look for a constant ratio.</p>
+            <ul>
+              <li>Example: 3, 6, 12, 24, ...</li>
+              <li>Each term multiplies by 2.</li>
+              <li>Common ratio: r = 2</li>
+              <li>Quick check: divide neighboring terms.</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Formula Clues</h3>
+            <ul>
+              <li>Arithmetic explicit: aₙ = a₁ + (n − 1)d</li>
+              <li>Arithmetic recursive: aₙ = aₙ₋₁ + d</li>
+              <li>Geometric explicit: aₙ = a₁ · rⁿ⁻¹</li>
+              <li>Geometric recursive: aₙ = r · aₙ₋₁</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Test-Taking Shortcut</h3>
+            <p>Before using a formula, identify the pattern:</p>
+            <ul>
+              <li>If the gaps match → arithmetic.</li>
+              <li>If the multipliers match → geometric.</li>
+              <li>If neither matches → it may not be either one.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="arithmetic" class="section">
+      <div class="question-card" id="arithmeticCard"></div>
+    </section>
+
+    <section id="geometric" class="section">
+      <div class="question-card" id="geometricCard"></div>
+    </section>
+
+    <section id="mixed" class="section">
+      <div class="question-card" id="mixedCard"></div>
+    </section>
+
+    <section id="report" class="section">
+      <div class="panel">
+        <h2>Session Report</h2>
+        <p>Use this as a quick parent-facing or tutor-facing snapshot of what was practiced.</p>
+        <div class="report" id="reportText"></div>
+        <div class="tools">
+          <button class="primary" onclick="buildReport()">Refresh Report</button>
+          <button class="secondary" onclick="window.print()">Print Report</button>
+          <button class="secondary" onclick="downloadReport()">Download Report</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<script>
+const state = {
+  correct: 0,
+  attempts: 0,
+  streak: 0,
+  totalAnswered: 0,
+  history: [],
+  current: {},
+  selectedType: null,
+  sectionProgress: { arithmetic: 0, geometric: 0, mixed: 0 },
+  hintsUsed: 0
+};
+
+const arithmeticProblems = [
+  { seq:[4,7,10,13], d:3, ask:'next', answer:16, level:1 },
+  { seq:[18,16,14,12], d:-2, ask:'next', answer:10, level:1 },
+  { seq:[2,6,10,14], d:4, ask:'d', answer:4, level:1 },
+  { seq:[31,26,21,16], d:-5, ask:'next', answer:11, level:2 },
+  { seq:[-3,2,7,12], d:5, ask:'next', answer:17, level:2 },
+  { seq:[9,17,25,33], d:8, ask:'term', n:9, answer:73, level:3 },
+  { seq:[40,34,28,22], d:-6, ask:'term', n:8, answer:-2, level:3 },
+  { seq:[7,10,13,16], d:3, ask:'formula', answer:'a_n=7+3(n-1)', level:4 },
+  { seq:[50,43,36,29], d:-7, ask:'term', n:12, answer:-27, level:4 },
+  { seq:[-12,-5,2,9], d:7, ask:'missing', missingIndex:3, answer:16, level:5 }
+];
+
+const geometricProblems = [
+  { seq:[3,6,12,24], r:2, ask:'next', answer:48, level:1 },
+  { seq:[80,40,20,10], r:0.5, ask:'next', answer:5, level:1 },
+  { seq:[2,10,50,250], r:5, ask:'r', answer:5, level:2 },
+  { seq:[-4,12,-36,108], r:-3, ask:'next', answer:-324, level:3 },
+  { seq:[1,3,9,27], r:3, ask:'term', n:7, answer:729, level:3 },
+  { seq:[96,48,24,12], r:0.5, ask:'term', n:8, answer:0.75, level:4 },
+  { seq:[5,15,45,135], r:3, ask:'formula', answer:'a_n=5*3^(n-1)', level:4 },
+  { seq:[256,128,64,32], r:0.5, ask:'missing', missingIndex:3, answer:16, level:4 },
+  { seq:[7,-14,28,-56], r:-2, ask:'term', n:8, answer:-896, level:5 },
+  { seq:[0.5,1.5,4.5,13.5], r:3, ask:'next', answer:40.5, level:5 }
+];
+
+const mixedProblems = [
+  { type:'Arithmetic', seq:[6,11,16,21], answerType:'Arithmetic', answerValue:26, ask:'identifyNext', level:1, reason:'same difference of +5' },
+  { type:'Geometric', seq:[6,18,54,162], answerType:'Geometric', answerValue:486, ask:'identifyNext', level:1, reason:'same ratio of ×3' },
+  { type:'Arithmetic', seq:[22,18,14,10], answerType:'Arithmetic', answerValue:6, ask:'identifyNext', level:2, reason:'same difference of −4' },
+  { type:'Geometric', seq:[81,27,9,3], answerType:'Geometric', answerValue:1, ask:'identifyNext', level:2, reason:'same ratio of ÷3' },
+  { type:'Arithmetic', seq:[-8,-1,6,13], answerType:'Arithmetic', answerValue:20, ask:'identifyNext', level:3, reason:'same difference of +7' },
+  { type:'Geometric', seq:[2,-6,18,-54], answerType:'Geometric', answerValue:162, ask:'identifyNext', level:3, reason:'same ratio of ×−3' },
+  { type:'Neither', seq:[3,6,11,18], answerType:'Neither', answerValue:'Neither', ask:'identifyOnly', level:4, reason:'differences are +3, +5, +7; no constant difference or ratio' },
+  { type:'Arithmetic', seq:[100,87,74,61], answerType:'Arithmetic', answerValue:48, ask:'identifyNext', level:4, reason:'same difference of −13' },
+  { type:'Geometric', seq:[1.5,3,6,12], answerType:'Geometric', answerValue:24, ask:'identifyNext', level:4, reason:'same ratio of ×2' },
+  { type:'Neither', seq:[2,4,8,14], answerType:'Neither', answerValue:'Neither', ask:'identifyOnly', level:5, reason:'looks geometric at first, but 8 to 14 breaks the pattern' },
+  { type:'Geometric', seq:[64,-32,16,-8], answerType:'Geometric', answerValue:4, ask:'identifyNext', level:5, reason:'same ratio of ×−1/2' },
+  { type:'Arithmetic', seq:[-20,-13,-6,1], answerType:'Arithmetic', answerValue:8, ask:'identifyNext', level:5, reason:'same difference of +7' }
+];
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (id === 'arithmetic') renderProblem('arithmetic');
+  if (id === 'geometric') renderProblem('geometric');
+  if (id === 'mixed') renderProblem('mixed');
+}
+
+function getBank(section) {
+  if (section === 'arithmetic') return arithmeticProblems;
+  if (section === 'geometric') return geometricProblems;
+  return mixedProblems;
+}
+
+function nextProblem(section) {
+  const bank = getBank(section);
+  const index = state.sectionProgress[section] % bank.length;
+  state.sectionProgress[section]++;
+  return {...bank[index]};
+}
+
+function renderProblem(section) {
+  state.selectedType = null;
+  const problem = nextProblem(section);
+  state.current[section] = problem;
+  const card = document.getElementById(section + 'Card');
+  const label = section === 'mixed' ? 'Mixed Challenge' : section[0].toUpperCase() + section.slice(1);
+  const sequenceText = problem.seq.join(', ') + ', ...';
+  const prompt = buildPrompt(problem, section);
+  const inputNeeded = section !== 'mixed' || problem.ask !== 'identifyOnly';
+
+  card.innerHTML = `
+    <div class="badge-row">
+      <span class="badge">${label}</span>
+      <span class="badge warn">Level ${problem.level}</span>
+      <span class="badge purple">Problem ${state.sectionProgress[section]}</span>
+    </div>
+    <div class="sequence">${sequenceText}</div>
+    <div class="prompt">${prompt}</div>
+    ${section === 'mixed' ? mixedChoicesHtml() : ''}
+    ${inputNeeded ? `<div class="answer-area"><input id="${section}Answer" type="text" placeholder="Type your answer here" onkeydown="if(event.key==='Enter') checkAnswer('${section}')"/><button class="primary" onclick="checkAnswer('${section}')">Check</button></div>` : `<div class="tools"><button class="primary" onclick="checkAnswer('${section}')">Check</button></div>`}
+    <div class="tools">
+      <button class="small-btn" onclick="showHint('${section}', 1)">Hint 1</button>
+      <button class="small-btn" onclick="showHint('${section}', 2)">Hint 2</button>
+      <button class="small-btn" onclick="showAnswer('${section}')">Show Answer</button>
+      <button class="small-btn" onclick="renderProblem('${section}')">Skip / Next</button>
+    </div>
+    <div class="feedback" id="${section}Feedback">Try it first. Use a hint only when you need one.</div>
+  `;
+  setTimeout(() => {
+    const input = document.getElementById(section + 'Answer');
+    if (input) input.focus();
+  }, 50);
+}
+
+function buildPrompt(p, section) {
+  if (section === 'mixed') {
+    if (p.ask === 'identifyOnly') return 'Identify the sequence type. Is it arithmetic, geometric, or neither?';
+    return 'First identify the sequence type. Then find the next term.';
+  }
+  if (p.ask === 'next') return 'Find the next term.';
+  if (p.ask === 'd') return 'Find the common difference, d.';
+  if (p.ask === 'r') return 'Find the common ratio, r.';
+  if (p.ask === 'term') return `Find a${p.n}, the ${ordinal(p.n)} term.`;
+  if (p.ask === 'formula') return 'Write an explicit formula. Example format: a_n=7+3(n-1) or a_n=5*3^(n-1).';
+  if (p.ask === 'missing') return 'Find the next term that keeps the pattern going.';
+  return 'Solve the problem.';
+}
+
+function mixedChoicesHtml() {
+  return `<div class="choices">
+    <button class="choice-btn" onclick="selectType(this, 'Arithmetic')">Arithmetic: add/subtract same amount</button>
+    <button class="choice-btn" onclick="selectType(this, 'Geometric')">Geometric: multiply/divide same amount</button>
+    <button class="choice-btn" onclick="selectType(this, 'Neither')">Neither: no constant difference or ratio</button>
+  </div>`;
+}
+
+function selectType(btn, type) {
+  state.selectedType = type;
+  btn.parentElement.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function checkAnswer(section) {
+  const p = state.current[section];
+  const feedback = document.getElementById(section + 'Feedback');
+  let correct = false;
+  let userValue = '';
+
+  if (section === 'mixed') {
+    const typeCorrect = state.selectedType === p.answerType;
+    if (p.ask === 'identifyOnly') {
+      correct = typeCorrect;
+      userValue = state.selectedType || 'No type selected';
+    } else {
+      const input = document.getElementById(section + 'Answer');
+      userValue = input.value.trim();
+      correct = typeCorrect && numericEqual(userValue, p.answerValue);
+    }
+  } else {
+    const input = document.getElementById(section + 'Answer');
+    userValue = input.value.trim();
+    if (p.ask === 'formula') correct = formulaClose(userValue, p.answer);
+    else correct = numericEqual(userValue, p.answer);
+  }
+
+  state.attempts++;
+  state.totalAnswered++;
+  if (correct) {
+    state.correct++;
+    state.streak++;
+    feedback.className = 'feedback good';
+    feedback.innerHTML = `✅ Correct. ${explainProblem(p, section)} <button class="small-btn" onclick="renderProblem('${section}')">Next Problem</button>`;
+  } else {
+    state.streak = 0;
+    feedback.className = 'feedback bad';
+    feedback.innerHTML = `Not quite yet. ${errorMessage(p, section, userValue)} Try again, or use a hint.`;
+  }
+  state.history.push({ section, problem:p, correct, userValue, time:new Date().toLocaleString() });
+  updateStats();
+}
+
+function numericEqual(user, answer) {
+  const cleaned = String(user).replace(/,/g,'').trim();
+  if (cleaned === '') return false;
+  const n = Number(cleaned);
+  return Number.isFinite(n) && Math.abs(n - Number(answer)) < 0.000001;
+}
+
+function formulaClose(user, answer) {
+  const clean = s => String(s).toLowerCase().replace(/\s/g,'').replace(/·/g,'*').replace(/an/g,'a_n');
+  return clean(user) === clean(answer) || clean(user).includes(clean(answer));
+}
+
+function errorMessage(p, section, userValue) {
+  if (section === 'mixed' && !state.selectedType) return 'Start by choosing arithmetic, geometric, or neither.';
+  if (section === 'mixed' && state.selectedType !== p.answerType) return `The sequence type is the issue. Check the differences and ratios before solving.`;
+  if (p.ask === 'formula') return 'Check a₁ and the pattern value. Arithmetic uses +(n−1)d; geometric uses × r^(n−1).';
+  return 'Recheck the pattern between terms. Small sign errors are common here.';
+}
+
+function showHint(section, level) {
+  const p = state.current[section];
+  const feedback = document.getElementById(section + 'Feedback');
+  state.hintsUsed++;
+  feedback.className = 'feedback warn';
+  feedback.innerHTML = hintText(p, section, level);
+  updateStats();
+}
+
+function hintText(p, section, level) {
+  if (section === 'arithmetic') {
+    if (level === 1) return 'Hint 1: Arithmetic sequences change by adding or subtracting the same number each time. Subtract neighboring terms.';
+    return `Hint 2: The common difference is ${p.d}. Use that to continue the pattern or find the requested term.`;
+  }
+  if (section === 'geometric') {
+    if (level === 1) return 'Hint 1: Geometric sequences change by multiplying or dividing by the same number each time. Divide neighboring terms.';
+    return `Hint 2: The common ratio is ${displayRatio(p.r)}. Use multiplication to continue the pattern.`;
+  }
+  if (level === 1) return 'Hint 1: Test the differences first. If those match, it is arithmetic. If not, test the ratios.';
+  return `Hint 2: This one is ${p.answerType}. Reason: ${p.reason}.`;
+}
+
+function showAnswer(section) {
+  const p = state.current[section];
+  const feedback = document.getElementById(section + 'Feedback');
+  feedback.className = 'feedback warn';
+  feedback.innerHTML = `Answer: <strong>${section === 'mixed' ? p.answerType + (p.ask === 'identifyNext' ? ', next term = ' + p.answerValue : '') : p.answer}</strong><br>${explainProblem(p, section)}`;
+}
+
+function explainProblem(p, section) {
+  if (section === 'arithmetic') {
+    if (p.ask === 'formula') return `a₁ is ${p.seq[0]} and d is ${p.d}, so an explicit formula is ${p.answer}.`;
+    if (p.ask === 'term') return `a₁ is ${p.seq[0]} and d is ${p.d}. Use aₙ = a₁ + (n − 1)d.`;
+    return `The sequence changes by ${p.d > 0 ? '+' : ''}${p.d} each time.`;
+  }
+  if (section === 'geometric') {
+    if (p.ask === 'formula') return `a₁ is ${p.seq[0]} and r is ${displayRatio(p.r)}, so an explicit formula is ${p.answer}.`;
+    if (p.ask === 'term') return `a₁ is ${p.seq[0]} and r is ${displayRatio(p.r)}. Use aₙ = a₁ · rⁿ⁻¹.`;
+    return `The sequence changes by multiplying by ${displayRatio(p.r)} each time.`;
+  }
+  return `This is ${p.answerType}. Reason: ${p.reason}.`;
+}
+
+function updateStats() {
+  document.getElementById('correctStat').textContent = state.correct;
+  document.getElementById('attemptStat').textContent = state.attempts;
+  document.getElementById('streakStat').textContent = state.streak;
+  document.getElementById('accuracyStat').textContent = state.attempts ? Math.round((state.correct/state.attempts)*100) + '%' : '—';
+  const max = arithmeticProblems.length + geometricProblems.length + mixedProblems.length;
+  const done = Math.min(max, state.totalAnswered);
+  document.getElementById('progressBar').style.width = (done / max * 100) + '%';
+}
+
+function buildReport() {
+  const acc = state.attempts ? Math.round((state.correct/state.attempts)*100) + '%' : 'No attempts yet';
+  const bySection = ['arithmetic','geometric','mixed'].map(sec => {
+    const items = state.history.filter(h => h.section === sec);
+    const right = items.filter(h => h.correct).length;
+    return `${capitalize(sec)}: ${right}/${items.length} correct`;
+  }).join('\n');
+  const lastFive = state.history.slice(-5).map(h => `- ${capitalize(h.section)} | ${h.correct ? 'Correct' : 'Needs review'} | Sequence: ${h.problem.seq.join(', ')} | Response: ${h.userValue}`).join('\n') || 'No completed problems yet.';
+  const notes = state.history.length ? generateNotes() : 'Begin practice to generate notes.';
+  document.getElementById('reportText').textContent = `Sequences Practice Session Report\n\nOverall Accuracy: ${acc}\nCorrect: ${state.correct}\nAttempts: ${state.attempts}\nHighest Current Streak: ${state.streak}\nHints Used: ${state.hintsUsed}\n\nBreakdown\n${bySection}\n\nRecent Work\n${lastFive}\n\nTutor Notes\n${notes}`;
+}
+
+function generateNotes() {
+  const mixedWrong = state.history.filter(h => h.section === 'mixed' && !h.correct).length;
+  const arithWrong = state.history.filter(h => h.section === 'arithmetic' && !h.correct).length;
+  const geoWrong = state.history.filter(h => h.section === 'geometric' && !h.correct).length;
+  let notes = [];
+  if (arithWrong === 0 && state.history.some(h=>h.section==='arithmetic')) notes.push('Arithmetic sequences appear solid so far. Continue pushing term-number and formula questions.');
+  else if (arithWrong > 0) notes.push('Arithmetic sequences need continued practice, especially checking the common difference carefully.');
+  if (geoWrong === 0 && state.history.some(h=>h.section==='geometric')) notes.push('Geometric sequence work is progressing well. Continue reinforcing multiplication/ratio thinking.');
+  else if (geoWrong > 0) notes.push('Geometric sequences need more practice, especially identifying the common ratio and handling negative or fractional ratios.');
+  if (mixedWrong > 0) notes.push('Mixed identification should remain a focus: student should check differences first, then ratios, before solving.');
+  if (!notes.length) notes.push('Good start. More completed problems will give a clearer picture of strengths and gaps.');
+  return notes.join(' ');
+}
+
+function downloadReport() {
+  buildReport();
+  const text = document.getElementById('reportText').textContent;
+  const blob = new Blob([text], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'sequences-practice-report.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll() {
+  if (!confirm('Reset this practice session?')) return;
+  state.correct = 0; state.attempts = 0; state.streak = 0; state.totalAnswered = 0; state.history = []; state.hintsUsed = 0;
+  state.sectionProgress = { arithmetic: 0, geometric: 0, mixed: 0 };
+  updateStats();
+  renderProblem('arithmetic'); renderProblem('geometric'); renderProblem('mixed'); buildReport();
+}
+
+function ordinal(n) {
+  const s = ['th','st','nd','rd'], v = n % 100;
+  return n + (s[(v-20)%10] || s[v] || s[0]);
+}
+function displayRatio(r) { return r === 0.5 ? '1/2' : r === -0.5 ? '-1/2' : r; }
+function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+renderProblem('arithmetic');
+renderProblem('geometric');
+renderProblem('mixed');
+updateStats();
+</script>
+</body>
+</html>
